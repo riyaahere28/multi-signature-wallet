@@ -1,6 +1,42 @@
-# Rust's output directory
-target
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
 
-# Local settings
-.soroban
-.stellar
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Rust
+target/
+Cargo.lock
+
+# Stellar
+.soroban/
