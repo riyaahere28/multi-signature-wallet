@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🔐 Multi-Signature Wallet on Stellar (Soroban)
 
 ## 📌 Project Description
@@ -40,3 +41,6 @@ Instead of relying on a single private key, this wallet:
 ## 🚀 Deployed Smart Contract Link
 
 👉 https://lab.stellar.org/smart-contracts/contract-explorer?$=network$id=testnet&label=Testnet&horizonUrl=https:////horizon-testnet.stellar.org&rpcUrl=https:////soroban-testnet.stellar.org&passphrase=Test%20SDF%20Network%20/;%20September%202015;&smartContracts$explorer$contractId=CDZ555QUW4GITZJ6A6WUAJUQNMBMLPTNMUCNG4LNLHFQ6P57FI6VEWGD;; 
+=======
+# multi-signature-wallet
+>>>>>>> 80f481822d6047df7836972b6a3dc789eea1413e
