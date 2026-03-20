@@ -26,7 +26,7 @@ import {
 
 /** Your deployed Soroban contract ID */
 export const CONTRACT_ADDRESS =
-  "CBPJOABUYXRTGPJ5E2CT27ATLSC56PWJPQD3ZSTGZQURYRDZ3AHT3ZXS";
+  "CBBETPX5WV5V5TUJ2ZCMHYIQ5JJR62RIJQGXGLF7RA2Z74JRFSAOU7E4";
 
 /** Network passphrase (testnet by default) */
 export const NETWORK_PASSPHRASE = Networks.TESTNET;
@@ -95,12 +95,6 @@ export async function getWalletAddress(): Promise<string | null> {
 
 /**
  * Build, simulate, and optionally sign + submit a Soroban contract call.
- *
- * @param method   - The contract method name to invoke
- * @param params   - Array of xdr.ScVal parameters for the method
- * @param caller   - The public key (G...) of the calling account
- * @param sign     - If true, signs via Freighter and submits. If false, only simulates.
- * @returns        The result of the simulation or submission
  */
 export async function callContract(
   method: string,
@@ -213,13 +207,14 @@ export function toScValBool(value: boolean): xdr.ScVal {
 
 /**
  * Create a new multisig wallet.
- * Calls: create_wallet(wallet_id: String, signers: Vec<Address>, threshold: u32)
+ * PERMISSIONLESS: Anyone can create a wallet.
  */
 export async function createWallet(
   caller: string,
   walletId: string,
   signers: string[],
-  threshold: number
+  threshold: number,
+  tokenAddress: string
 ) {
   const signerScVals = signers.map((s) => toScValAddress(s));
   return callContract(
@@ -228,6 +223,7 @@ export async function createWallet(
       toScValString(walletId),
       nativeToScVal(signerScVals, { type: "vec<address>" }),
       toScValU32(threshold),
+      toScValAddress(tokenAddress),
     ],
     caller,
     true
@@ -236,7 +232,6 @@ export async function createWallet(
 
 /**
  * Get wallet details (read-only).
- * Calls: get_wallet(wallet_id: String) -> Wallet
  */
 export async function getWallet(walletId: string, caller?: string) {
   return readContract("get_wallet", [toScValString(walletId)], caller);
@@ -244,15 +239,36 @@ export async function getWallet(walletId: string, caller?: string) {
 
 /**
  * Get all wallet IDs (read-only).
- * Calls: get_wallets() -> Vec<String>
  */
 export async function getWallets(caller?: string) {
   return readContract("get_wallets", [], caller);
 }
 
 /**
- * Propose a transfer from a multisig wallet.
- * Calls: propose(wallet_id: String, target: Address, amount: i128) -> u32
+ * Deposit tokens into the wallet.
+ * PERMISSIONLESS: Anyone can deposit to any wallet.
+ */
+export async function deposit(
+  caller: string,
+  walletId: string,
+  from: string,
+  amount: bigint
+) {
+  return callContract(
+    "deposit",
+    [
+      toScValString(walletId),
+      toScValAddress(from),
+      toScValI128(amount),
+    ],
+    caller,
+    true
+  );
+}
+
+/**
+ * Propose a transfer from the multisig wallet.
+ * PERMISSIONLESS: Anyone can propose a transaction.
  */
 export async function proposeTransfer(
   caller: string,
@@ -274,7 +290,6 @@ export async function proposeTransfer(
 
 /**
  * Get a transaction by wallet ID and index (read-only).
- * Calls: get_transaction(wallet_id: String, tx_index: u32) -> Transaction
  */
 export async function getTransaction(
   walletId: string,
@@ -290,7 +305,6 @@ export async function getTransaction(
 
 /**
  * Get transaction count for a wallet (read-only).
- * Calls: get_transaction_count(wallet_id: String) -> u32
  */
 export async function getTransactionCount(
   walletId: string,
@@ -301,7 +315,6 @@ export async function getTransactionCount(
 
 /**
  * Sign a transaction (requires auth from the signer).
- * Calls: sign(wallet_id: String, tx_index: u32, signer: Address)
  */
 export async function signTransaction(
   caller: string,
